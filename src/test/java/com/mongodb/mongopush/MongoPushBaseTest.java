@@ -1,6 +1,6 @@
 package com.mongodb.mongopush;
 
-import static com.mongodb.mongopush.constants.MongoPushConstants.COMMA;
+import static com.mongodb.mongopush.constants.MongoPushConstants.*;
 import static com.mongodb.mongopush.constants.MongoPushConstants.SLASH_DOT;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,7 +26,9 @@ import com.mongodb.diffutil.DiffUtilRunner;
 import com.mongodb.mongopush.MongopushOptions.Builder;
 import com.mongodb.mongopush.config.MongoPushConfiguration;
 import com.mongodb.mongopush.events.InitialSyncCompletedEvent;
+import com.mongodb.mongopush.events.OplogAppliedLagEvent;
 import com.mongodb.mongopush.events.OplogStreamingCompletedEvent;
+import com.mongodb.mongopush.events.OplogTotalDocInsertedEvent;
 import com.mongodb.mongopush.events.RefetchTaskCompleteEvent;
 import com.mongodb.mongopush.events.VerificationTaskCompleteEvent;
 import com.mongodb.mongopush.events.VerificationTaskFailedEvent;
@@ -131,7 +133,14 @@ public class MongoPushBaseTest {
 			case POPULATE_DATA_MULTIPLE_DATABASE:
 				if(mongoPushTestModel.getPopulateDataArguments() != null)
 				{	String[] populateDataArguments = mongoPushTestModel.getPopulateDataArguments().split(COMMA);
-					sourceTestClient.populateData(Integer.valueOf(populateDataArguments[0]), Integer.valueOf(populateDataArguments[1]), Integer.valueOf(populateDataArguments[2]), false);
+					sourceTestClient.populateData(Integer.valueOf(populateDataArguments[0]), Integer.valueOf(populateDataArguments[1]), Integer.valueOf(populateDataArguments[2]), false, false);
+				}
+				break;
+			case POPULATE_STATIC_DATA:
+				if(mongoPushTestModel.getPopulateDataArguments() != null)
+				{	String[] populateDataArguments = mongoPushTestModel.getPopulateDataArguments().split(COMMA);
+					sourceTestClient.populateData(Integer.valueOf(populateDataArguments[0]), Integer.valueOf(populateDataArguments[1]), Integer.valueOf(populateDataArguments[2]), false, true);
+					targetTestClient.populateData(Integer.valueOf(populateDataArguments[0]), Integer.valueOf(populateDataArguments[1]), Integer.valueOf(populateDataArguments[2]), false, true);
 				}
 				break;
 			case DATA_TYPE_OPERATIONS:
@@ -150,7 +159,32 @@ public class MongoPushBaseTest {
 				if(mongoPushTestModel.getUniqueIndexArguments() != null)
 				{
 					String[] uniqueIndexArguments = mongoPushTestModel.getUniqueIndexArguments().split(COMMA);
-					sourceTestClient.populateData(Integer.valueOf(uniqueIndexArguments[0]), Integer.valueOf(uniqueIndexArguments[1]), Integer.valueOf(uniqueIndexArguments[2]), Boolean.valueOf(uniqueIndexArguments[3]));
+					sourceTestClient.populateData(Integer.valueOf(uniqueIndexArguments[0]), Integer.valueOf(uniqueIndexArguments[1]), Integer.valueOf(uniqueIndexArguments[2]), Boolean.valueOf(uniqueIndexArguments[3]), false);
+				}
+				break;
+			case CREATE_DATA_INCONSISTENCY:
+				if(mongoPushTestModel.getDeleteDocumentArguments() != null)
+				{
+					String[] deleteDocumentArgumentsArray = mongoPushTestModel.getDeleteDocumentArguments().split(COMMA);
+					if(deleteDocumentArgumentsArray[0].equals(SOURCE))
+					{
+						sourceTestClient.deleteDocuments(Integer.valueOf(deleteDocumentArgumentsArray[1]), Integer.valueOf(deleteDocumentArgumentsArray[2]), Integer.valueOf(deleteDocumentArgumentsArray[3]));
+					}
+					if(deleteDocumentArgumentsArray[0].equals(TARGET))
+					{
+						targetTestClient.deleteDocuments(Integer.valueOf(deleteDocumentArgumentsArray[1]), Integer.valueOf(deleteDocumentArgumentsArray[2]), Integer.valueOf(deleteDocumentArgumentsArray[3]));
+					}
+				}
+				break;
+			case MATCH_REFETCH_COLLECTION:
+				if(mongoPushTestModel.getDeleteDocumentArguments() != null)
+				{
+					String[] deleteDocumentArgumentsArray = mongoPushTestModel.getDeleteDocumentArguments().split(COMMA);
+					if(deleteDocumentArgumentsArray[0].equals(TARGET))
+					{
+						boolean refetchMatched = targetTestClient.matchRefetchCollection(Integer.valueOf(deleteDocumentArgumentsArray[1]), Integer.valueOf(deleteDocumentArgumentsArray[2]), Integer.valueOf(deleteDocumentArgumentsArray[3]));
+						assertTrue(refetchMatched);
+					}
 				}
 				break;
 			case EXECUTE_OTHER_MIGRATION_TOOL:
@@ -213,8 +247,27 @@ public class MongoPushBaseTest {
 					Thread.sleep(5000);
 					if (mongopushRunner.isOplogStreamingCompleted()) {
 						assertTrue(mongopushRunner.isOplogStreamingCompleted());
-						Thread.sleep(15000);
-						break;
+						mongopushRunner.oplogTotalDocInserted(new OplogTotalDocInsertedEvent(false));
+						long startTime_oplogTotalDocInserted = System.currentTimeMillis();
+						long endTime_oplogTotalDocInserted = System.currentTimeMillis();
+						while(endTime_oplogTotalDocInserted - startTime_oplogTotalDocInserted < 60000)
+						{
+							Thread.sleep(60000);
+							if(mongopushRunner.isOplogTotalDocInserted())
+							{
+								mongopushRunner.oplogTotalDocInserted(new OplogTotalDocInsertedEvent(false));
+								startTime_oplogTotalDocInserted = System.currentTimeMillis();
+							}
+							endTime_oplogTotalDocInserted = System.currentTimeMillis();
+						}
+						if(mongopushRunner.isOplogAppliedLag())
+						{
+							mongopushRunner.oplogAppliedLag(new OplogAppliedLagEvent(false));
+						}
+						else
+						{
+							break;
+						}
 					}
 				}
 				mongopushRunner.oplogStreamingCompleted(new OplogStreamingCompletedEvent(false));
@@ -274,7 +327,7 @@ public class MongoPushBaseTest {
 				Thread.sleep(5000);
 				break;
 			case RESUME_MONGO_PUSH:
-				Thread.sleep(20000);
+				Thread.sleep(10000);
 				mongoPushOptionsBuilder = MongopushOptions.builder().mode(MongopushMode.RESUME);
 				if(mongoPushTestModel.getIncludeOptions() != null)
 				{

@@ -18,7 +18,9 @@ import org.springframework.stereotype.Component;
 import com.mongodb.mongopush.MongopushOptions.IncludeOption;
 import com.mongodb.mongopush.config.MongoPushConfiguration;
 import com.mongodb.mongopush.events.InitialSyncCompletedEvent;
+import com.mongodb.mongopush.events.OplogAppliedLagEvent;
 import com.mongodb.mongopush.events.OplogStreamingCompletedEvent;
+import com.mongodb.mongopush.events.OplogTotalDocInsertedEvent;
 import com.mongodb.mongopush.events.RefetchTaskCompleteEvent;
 import com.mongodb.mongopush.events.VerificationTaskCompleteEvent;
 import com.mongodb.mongopush.events.VerificationTaskFailedEvent;
@@ -46,6 +48,10 @@ public class MongopushRunner implements MongopushStatusListener {
 	private InitialSyncCompletedEvent initialSyncCompletedEvent;
 	private boolean oplogStreamingCompleted;
 	private OplogStreamingCompletedEvent oplogStreamingCompletedEvent;
+	private boolean oplogTotalDocInserted;
+	private OplogTotalDocInsertedEvent oplogTotalDocInsertedEvent;
+	private boolean oplogAppliedLag;
+	private OplogAppliedLagEvent oplogAppliedLagEvent;
 	private boolean verificationTaskComplete;
 	private VerificationTaskCompleteEvent verificationTaskCompleteEvent;
 	private boolean verificationTaskFailed;
@@ -86,6 +92,8 @@ public class MongopushRunner implements MongopushStatusListener {
 				break;
 			case RESUME:
 				addArg(RESUME, SNAPSHOT_DATA_PATH);
+				addArg(SOURCE_PASSWORD, parseDatabasePassword(mongoPushConfiguration.getMongopushSource()));
+				addArg(TARGET_PASSWORD, parseDatabasePassword(mongoPushConfiguration.getMongopushTarget()));
 				break;
 			case START:
 				addArg(START, MIGRATION_TOOL_CONFIG_JSON);
@@ -101,8 +109,8 @@ public class MongopushRunner implements MongopushStatusListener {
 			addArg("include", include.toJson());
 		}
 
-		addArg("source", mongoPushConfiguration.getMongopushSource());
-		addArg("target", mongoPushConfiguration.getMongopushTarget());
+		addArg(SOURCE, mongoPushConfiguration.getMongopushSource());
+		addArg(TARGET, mongoPushConfiguration.getMongopushTarget());
 		addArg("yes");
 
 		PumpStreamHandler psh = new PumpStreamHandler(new ExecBasicLogHandler("mongopush_mode_".concat(options.getMode().getName()), this));
@@ -116,6 +124,17 @@ public class MongopushRunner implements MongopushStatusListener {
 
 	}
 
+	private String parseDatabasePassword(String dbConnectionString)
+	{
+		String[] dbConnectionArray = dbConnectionString.split(COLON);
+		String dbPassword = null;
+		if(dbConnectionArray.length == 3)
+		{
+			dbPassword = dbConnectionArray[2].split(AT_RATE)[0];
+		}
+		return dbPassword;
+	}
+	
 	public void waitForInitialSyncComplete() {
 		while (isInitialSyncComplete() == false && processFailed == false) {
 			try {
@@ -181,6 +200,26 @@ public class MongopushRunner implements MongopushStatusListener {
 
 	public boolean isOplogStreamingCompleted() {
 		return oplogStreamingCompleted;
+	}
+	
+	public void oplogTotalDocInserted(OplogTotalDocInsertedEvent oplogTotalDocInsertedEvent) {
+		this.oplogTotalDocInsertedEvent = oplogTotalDocInsertedEvent;
+		logger.debug("***** oplog total doc inserted event {} *****", oplogStreamingCompletedEvent.isOplogStreamingCompleted());
+		oplogTotalDocInserted = oplogTotalDocInsertedEvent.isOplogTotalDocInserted();
+	}
+
+	public boolean isOplogTotalDocInserted() {
+		return oplogTotalDocInserted;
+	}
+	
+	public void oplogAppliedLag(OplogAppliedLagEvent oplogAppliedLagEvent) {
+		this.oplogAppliedLagEvent = oplogAppliedLagEvent;
+		logger.debug("***** oplog applied lag event {} *****", oplogAppliedLagEvent.isOplogAppliedLag());
+		oplogAppliedLag = oplogAppliedLagEvent.isOplogAppliedLag();
+	}
+
+	public boolean isOplogAppliedLag() {
+		return oplogAppliedLag;
 	}
 	
 	public void verificationTaskComplete(VerificationTaskCompleteEvent verificationTaskCompleteEvent) {

@@ -13,7 +13,9 @@ import org.slf4j.LoggerFactory;
 
 import com.mongodb.mongopush.MongopushRunner;
 import com.mongodb.mongopush.events.InitialSyncCompletedEvent;
+import com.mongodb.mongopush.events.OplogAppliedLagEvent;
 import com.mongodb.mongopush.events.OplogStreamingCompletedEvent;
+import com.mongodb.mongopush.events.OplogTotalDocInsertedEvent;
 import com.mongodb.mongopush.events.RefetchTaskCompleteEvent;
 import com.mongodb.mongopush.events.VerificationTaskCompleteEvent;
 import com.mongodb.mongopush.events.VerificationTaskFailedEvent;
@@ -30,7 +32,8 @@ public class ExecBasicLogHandler extends LogOutputStream {
     Pattern verificationTaskCompletePattern = Pattern.compile("^.* Verification tasks complete");
     Pattern verificationTaskFailedPattern = Pattern.compile("^.* Verification Task .* out of retries, failing");
     Pattern refetchTaskCompletePattern = Pattern.compile("^.* refetch process completed");
-    
+    Pattern oplogTotalDocInsertedPattern = Pattern.compile("^.* Total doc inserted (.*) total write request (.*)");
+    Pattern oplogAppliedLagPattern = Pattern.compile("^.* applied, lag: (.*)");
     
     private MongopushStatusListener listener;
     
@@ -56,6 +59,16 @@ public class ExecBasicLogHandler extends LogOutputStream {
         Matcher oplogStreamingMatcher = oplogStreamingCompletedPattern.matcher(line);
         if (oplogStreamingMatcher.find()) {
         	listener.oplogStreamingCompleted(new OplogStreamingCompletedEvent(true));
+        }
+        
+        Matcher oplogTotalDocInsertedMatcher = oplogTotalDocInsertedPattern.matcher(line);
+        if (oplogTotalDocInsertedMatcher.find()) {
+        	listener.oplogTotalDocInserted(new OplogTotalDocInsertedEvent(true));
+        }
+        
+        Matcher oplogAppliedLagMatcher = oplogAppliedLagPattern.matcher(line);
+        if (oplogAppliedLagMatcher.find()) {
+        	listener.oplogAppliedLag(new OplogAppliedLagEvent(true));
         }
         
         Matcher verificationTaskCompleteMatcher = verificationTaskCompletePattern.matcher(line);
