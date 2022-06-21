@@ -103,11 +103,7 @@ public class MongoPushBaseTest {
 		Builder mongoPushOptionsBuilder;
 		switch (mongoPushTestEvent) {
 			case EXECUTE_POC_DRIVER:
-				if(mongoPushTestModel.getPocdriveArguments() != null)
-				{
-					pocDriverConfiguration.setPocDriverCommandlineArguments(mongoPushTestModel.getPocdriveArguments());
-				}
-				pocDriverRunner.execute();
+				pocDriverRunner.execute(mongoPushTestModel.getPocdriveArguments(), mongoPushTestModel.getTestInitialDocumentCount());
 				break;
 			case INITIAL_DATA_INSERTED:
 				while (true) {
@@ -347,6 +343,9 @@ public class MongoPushBaseTest {
 				}
 				options = mongoPushOptionsBuilder.build();
 				mongopushRunner.execute(options);
+				break;
+			case DELAY:
+				Thread.sleep(5000);
 				break;
 			case EXECUTE_DIFF_UTIL:
 				DiffSummary ds = diffUtilRunner.diff();

@@ -25,7 +25,8 @@ public enum MongoPushTestEvent {
 	CREATE_DATA_INCONSISTENCY("CreateDataInconsistency"),
 	MATCH_REFETCH_COLLECTION("MatchRefetchCollection"),
 	EXECUTE_OTHER_MIGRATION_TOOL("ExecuteOtherMigrationTool"),
-	EXECUTE_OTHER_MIGRATION_TOOL_COMPARE("ExecuteOtherMigrationToolCompare");
+	EXECUTE_OTHER_MIGRATION_TOOL_COMPARE("ExecuteOtherMigrationToolCompare"),
+	DELAY("Delay");
 	
 	private String name;
 	

@@ -29,6 +29,7 @@ public class MongoPushConstants {
 	public static final String UNIQUE_INDEX_ARGUMENTS = "uniqueIndexArguments";
 	public static final String DELETE_DOCUMENT_ARGUMENTS = "deleteDocumentArguments";
 	public static final String UPDATE_DOCUMENT_ARGUMENTS = "updateDocumentArguments";
+	public static final String TEST_INITIAL_DOCUMENT_COUNT = "testInitialDocumentCount";
 	
 	public static final String PUSH = "push";
 	public static final String VERIFY = "verify";

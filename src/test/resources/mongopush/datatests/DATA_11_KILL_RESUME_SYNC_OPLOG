@@ -1,5 +1,5 @@
 {
-	"testSequenceName": "POC_DRIVER_MONGO_PUSH_DATA_SYNC_KILL_RESUME_OPLOG",
+	"testSequenceName": "POC_DRIVER_MONGO_PUSH_DATA_KILL_RESUME_SYNC_OPLOG",
 	"includeOptions": [{"namespace":"POCDB.POCCOLL"}],
 	"pocdriveArguments" : "-k 5 -i 2 -u 2 -b 5",
 }

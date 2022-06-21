@@ -15,6 +15,7 @@ public class MongoPushTestModel {
 	private String uniqueIndexArguments;
 	private String deleteDocumentArguments;
 	private String updateDocumentArguments;
+	private long testInitialDocumentCount;
 	
 	public List<MongoPushTestEvent> getMongoPushTestEvents() {
 		return mongoPushTestEvents;
@@ -69,6 +70,12 @@ public class MongoPushTestModel {
 	}
 	public void setUpdateDocumentArguments(String updateDocumentArguments) {
 		this.updateDocumentArguments = updateDocumentArguments;
+	}
+	public long getTestInitialDocumentCount() {
+		return testInitialDocumentCount;
+	}
+	public void setTestInitialDocumentCount(long testInitialDocumentCount) {
+		this.testInitialDocumentCount = testInitialDocumentCount;
 	}
 	
 }

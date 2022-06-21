@@ -36,7 +36,7 @@ public class POCDriverRunner implements POCDriverStatusListener {
 	private DocumentsInsertedCountEvent documentsInsertedCountEvent;
 	private long documentInsertedCount;
 	
-	public void execute() throws ExecuteException, IOException, InterruptedException {
+	public void execute(String pocdriverArguments, long testInitialDocumentCount) throws ExecuteException, IOException, InterruptedException {
 
 		logger.debug("POCDriver relative binary path: {}", pocDriverConfiguration.getPocDriverBinaryPath());
 		
@@ -46,10 +46,17 @@ public class POCDriverRunner implements POCDriverStatusListener {
 		    @Override
 		    public void run() {
 			    try {
-			    	ProcessBuilder builder = new ProcessBuilder(createDriverRunCommand());
+			    	ProcessBuilder builder = new ProcessBuilder(createDriverRunCommand(pocdriverArguments));
 					Process ps = builder.start();
 					pocDriverLogHandler.setProcess(ps);
-					pocDriverLogHandler.setInitialDocumentCount(pocDriverConfiguration.getInitialDocumentCount());
+					if(testInitialDocumentCount > 0)
+					{
+						pocDriverLogHandler.setInitialDocumentCount(testInitialDocumentCount);
+					}
+					else
+					{
+						pocDriverLogHandler.setInitialDocumentCount(pocDriverConfiguration.getInitialDocumentCount());
+					}
 					pocDriverLogHandler.processLogs();
 		    	} catch (IOException e) {
 					e.printStackTrace();
@@ -58,7 +65,7 @@ public class POCDriverRunner implements POCDriverStatusListener {
 		});	
 	}
 	
-	private String[] createDriverRunCommand() {
+	private String[] createDriverRunCommand(String pocdriverArguments) {
 		CommandLine cmdLine = new CommandLine(JAVA);
 		cmdLine.addArgument(HYPHEN_JAR);
 		String pocDriverDefaultPath = this.getClass().getClassLoader().getResource(pocDriverConfiguration.getPocDriverBinaryPath()).toString().split(COLON)[1];
@@ -66,7 +73,15 @@ public class POCDriverRunner implements POCDriverStatusListener {
 		
 		if(!pocDriverConfiguration.isPocDriverDefault())
 		{
-			String[] cmdOptions = pocDriverConfiguration.getPocDriverCommandlineArguments().split(SPACE);
+			String[] cmdOptions = null;
+			if(pocdriverArguments != null)
+			{
+				cmdOptions = pocdriverArguments.split(SPACE);
+			}
+			else
+			{
+				cmdOptions = pocDriverConfiguration.getPocDriverCommandlineArguments().split(SPACE);
+			}
 			cmdLine.addArguments(cmdOptions);
 			cmdLine.addArgument("-c");
 			cmdLine.addArgument(pocDriverConfiguration.getPocDriverMongodbConnectionString());

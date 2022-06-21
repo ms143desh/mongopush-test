@@ -31,7 +31,7 @@ public enum MongoPushTestSequence {
 			MongoPushTestEvent.INITIAL_SYNC_COMPLETED,
 			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
 			MongoPushTestEvent.EXECUTE_MONGO_PUSH_MODE_VERIFY,
-			MongoPushTestEvent.VERIFICATION_TASK_COMPLETED,
+			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED,
 			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH
 			)),
 	
@@ -43,7 +43,7 @@ public enum MongoPushTestSequence {
 			MongoPushTestEvent.INITIAL_SYNC_COMPLETED,
 			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
 			MongoPushTestEvent.EXECUTE_MONGO_PUSH_MODE_VERIFY,
-			MongoPushTestEvent.VERIFICATION_TASK_COMPLETED,
+			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED,
 			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH
 			)),
 	
@@ -57,6 +57,7 @@ public enum MongoPushTestSequence {
 			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH
 			)),
 
+	//Test sequence for mongopush verify & refetch stage, with data insertion in one and multiple database
 	POC_DRIVER_MONGO_PUSH_DATA_ONLY_SYNC_ONE_DATABASE_VERIFY_REFETCH(Arrays.asList(
 			MongoPushTestEvent.EXECUTE_POC_DRIVER,
 			MongoPushTestEvent.INITIAL_DATA_INSERTED,
@@ -73,7 +74,8 @@ public enum MongoPushTestSequence {
 			MongoPushTestEvent.REFETCH_TASK_COMPLETED,
 			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
 			MongoPushTestEvent.EXECUTE_MONGO_PUSH_MODE_VERIFY,
-			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED
+			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED,
+			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH
 			)),
 	
 	POC_DRIVER_MONGO_PUSH_DATA_ONLY_SYNC_MULTIPLE_DATABASE_VERIFY_REFETCH(Arrays.asList(
@@ -92,7 +94,8 @@ public enum MongoPushTestSequence {
 			MongoPushTestEvent.REFETCH_TASK_COMPLETED,
 			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
 			MongoPushTestEvent.EXECUTE_MONGO_PUSH_MODE_VERIFY,
-			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED
+			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED,
+			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH
 			)),
 	
 	POC_DRIVER_MONGO_PUSH_DATA_SYNC_OPLOG_ONE_DATABASE_VERIFY_REFETCH(Arrays.asList(
@@ -112,7 +115,8 @@ public enum MongoPushTestSequence {
 			MongoPushTestEvent.REFETCH_TASK_COMPLETED,
 			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
 			MongoPushTestEvent.EXECUTE_MONGO_PUSH_MODE_VERIFY,
-			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED
+			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED,
+			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH
 			)),
 	
 	POC_DRIVER_MONGO_PUSH_DATA_SYNC_OPLOG_MULTIPLE_DATABASE_VERIFY_REFETCH(Arrays.asList(
@@ -132,7 +136,8 @@ public enum MongoPushTestSequence {
 			MongoPushTestEvent.REFETCH_TASK_COMPLETED,
 			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
 			MongoPushTestEvent.EXECUTE_MONGO_PUSH_MODE_VERIFY,
-			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED
+			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED,
+			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH
 			)),
 	
 	POC_DRIVER_MONGO_PUSH_DATA_SYNC_DATA_OPERATION_OPLOG_ONE_DATABASE_VERIFY_REFETCH(Arrays.asList(
@@ -153,7 +158,8 @@ public enum MongoPushTestSequence {
 			MongoPushTestEvent.REFETCH_TASK_COMPLETED,
 			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
 			MongoPushTestEvent.EXECUTE_MONGO_PUSH_MODE_VERIFY,
-			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED
+			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED,
+			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH
 			)),
 	
 	POC_DRIVER_MONGO_PUSH_DATA_SYNC_DATA_OPERATION_OPLOG_MULTIPLE_DATABASE_VERIFY_REFETCH(Arrays.asList(
@@ -174,29 +180,35 @@ public enum MongoPushTestSequence {
 			MongoPushTestEvent.REFETCH_TASK_COMPLETED,
 			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
 			MongoPushTestEvent.EXECUTE_MONGO_PUSH_MODE_VERIFY,
-			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED
+			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED,
+			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH
 			)),
 	
+	//Test sequence only for mongopush verify stage
 	MONGO_PUSH_POPULATE_DATA_VERIFY(Arrays.asList(
 			MongoPushTestEvent.POPULATE_STATIC_DATA,
 			MongoPushTestEvent.EXECUTE_MONGO_PUSH_MODE_VERIFY,
-			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED
+			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED,
+			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH
 			)),
 	MONGO_PUSH_POPULATE_DATA_VERIFY_FAILED(Arrays.asList(
 			MongoPushTestEvent.POPULATE_STATIC_DATA,
 			MongoPushTestEvent.CREATE_DATA_INCONSISTENCY,
 			MongoPushTestEvent.EXECUTE_MONGO_PUSH_MODE_VERIFY,
-			MongoPushTestEvent.VERIFICATION_TASK_FAILED
+			MongoPushTestEvent.VERIFICATION_TASK_FAILED,
+			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH
 			)),
 	MONGO_PUSH_POPULATE_DATA_VERIFY_FAILED_MATCH_REFECT(Arrays.asList(
 			MongoPushTestEvent.POPULATE_STATIC_DATA,
 			MongoPushTestEvent.CREATE_DATA_INCONSISTENCY,
 			MongoPushTestEvent.EXECUTE_MONGO_PUSH_MODE_VERIFY,
 			MongoPushTestEvent.VERIFICATION_TASK_FAILED,
-			MongoPushTestEvent.MATCH_REFETCH_COLLECTION
+			MongoPushTestEvent.MATCH_REFETCH_COLLECTION,
+			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH
 			)),
 	
-	POC_DRIVER_MONGO_PUSH_DATA_SYNC_OPLOG_KILL_RESUME(Arrays.asList(
+	//Test sequence for mongopush kill-resume stage
+	POC_DRIVER_MONGO_PUSH_DATA_SYNC_KILL_RESUME_OPLOG(Arrays.asList(
 			MongoPushTestEvent.EXECUTE_POC_DRIVER,
 			MongoPushTestEvent.INITIAL_DATA_INSERTED,
 			MongoPushTestEvent.EXECUTE_MONGO_PUSH_MODE_DATA,
@@ -207,9 +219,50 @@ public enum MongoPushTestSequence {
 			MongoPushTestEvent.OPLOG_STREAMING_COMPLETED,
 			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
 			MongoPushTestEvent.EXECUTE_MONGO_PUSH_MODE_VERIFY,
-			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED
+			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED,
+			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH
 			)),
 	
+	POC_DRIVER_MONGO_PUSH_DATA_KILL_RESUME_SYNC_OPLOG(Arrays.asList(
+			MongoPushTestEvent.EXECUTE_POC_DRIVER,
+			MongoPushTestEvent.INITIAL_DATA_INSERTED,
+			MongoPushTestEvent.EXECUTE_MONGO_PUSH_MODE_DATA,
+			MongoPushTestEvent.DELAY,
+			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
+			MongoPushTestEvent.RESUME_MONGO_PUSH,
+			MongoPushTestEvent.INITIAL_SYNC_COMPLETED,
+			MongoPushTestEvent.SHUTDOWN_POC_DRIVER,
+			MongoPushTestEvent.OPLOG_STREAMING_COMPLETED,
+			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
+			MongoPushTestEvent.EXECUTE_MONGO_PUSH_MODE_VERIFY,
+			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED,
+			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH
+			)),
+	
+	POC_DRIVER_MONGO_PUSH_DATA_KILL_RESUME_SYNC_KILL_RESUME_OPLOG_KILL_RESUME(Arrays.asList(
+			MongoPushTestEvent.EXECUTE_POC_DRIVER,
+			MongoPushTestEvent.INITIAL_DATA_INSERTED,
+			MongoPushTestEvent.EXECUTE_MONGO_PUSH_MODE_DATA,
+			MongoPushTestEvent.DELAY,
+			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
+			MongoPushTestEvent.RESUME_MONGO_PUSH,
+			MongoPushTestEvent.INITIAL_SYNC_COMPLETED,
+			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
+			MongoPushTestEvent.RESUME_MONGO_PUSH,
+			MongoPushTestEvent.DELAY,
+			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
+			MongoPushTestEvent.SHUTDOWN_POC_DRIVER,
+			MongoPushTestEvent.RESUME_MONGO_PUSH,
+			MongoPushTestEvent.OPLOG_STREAMING_COMPLETED,
+			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
+			MongoPushTestEvent.EXECUTE_MONGO_PUSH_MODE_VERIFY,
+			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED,
+			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH
+			)),
+	
+	
+	
+	//Test sequence for other migration tools
 	POC_DRIVER_OTHER_MIGRATION_TOOL_DATA_SYNC_OPLOG(Arrays.asList(
 			MongoPushTestEvent.EXECUTE_POC_DRIVER,
 			MongoPushTestEvent.INITIAL_DATA_INSERTED,
@@ -220,7 +273,8 @@ public enum MongoPushTestSequence {
 			MongoPushTestEvent.OPLOG_STREAMING_COMPLETED,
 			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
 			MongoPushTestEvent.EXECUTE_OTHER_MIGRATION_TOOL_COMPARE,
-			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED
+			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED,
+			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH
 			)),
 	
 	POC_DRIVER_OTHER_MIGRATION_TOOL_DATA_ONLY_SYNC_OPLOG(Arrays.asList(
@@ -231,7 +285,8 @@ public enum MongoPushTestSequence {
 			MongoPushTestEvent.INITIAL_SYNC_COMPLETED,
 			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
 			MongoPushTestEvent.EXECUTE_OTHER_MIGRATION_TOOL_COMPARE,
-			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED
+			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED,
+			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH
 			));
 	
 	private List<MongoPushTestEvent> mongoPushTestEvents;
