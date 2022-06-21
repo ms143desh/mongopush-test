@@ -14,6 +14,7 @@ public class MongoPushTestModel {
 	private String idAsDocumentArguments;
 	private String uniqueIndexArguments;
 	private String deleteDocumentArguments;
+	private String updateDocumentArguments;
 	
 	public List<MongoPushTestEvent> getMongoPushTestEvents() {
 		return mongoPushTestEvents;
@@ -62,6 +63,12 @@ public class MongoPushTestModel {
 	}
 	public void setDeleteDocumentArguments(String deleteDocumentArguments) {
 		this.deleteDocumentArguments = deleteDocumentArguments;
+	}
+	public String getUpdateDocumentArguments() {
+		return updateDocumentArguments;
+	}
+	public void setUpdateDocumentArguments(String updateDocumentArguments) {
+		this.updateDocumentArguments = updateDocumentArguments;
 	}
 	
 }

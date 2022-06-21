@@ -83,6 +83,7 @@ public class MongoPushTestUtility {
 		String idAsDocumentArguments = (String) jsonObject.get(ID_AS_DOCUMENT_ARGUMENTS);
 		String uniqueIndexArguments = (String) jsonObject.get(UNIQUE_INDEX_ARGUMENTS);
 		String deleteDocumentArguments = (String) jsonObject.get(DELETE_DOCUMENT_ARGUMENTS);
+		String updateDocumentArguments = (String) jsonObject.get(UPDATE_DOCUMENT_ARGUMENTS);
 		
         List<MongoPushTestEvent> testSequenceEventsList = getTestSequenceEvents(testSequenceName);
         IncludeOption[] includeOptionArray = parseIncludeOptionsString(includeOptions);
@@ -97,6 +98,7 @@ public class MongoPushTestUtility {
         mongoPushTestModel.setIdAsDocumentArguments(idAsDocumentArguments);
         mongoPushTestModel.setUniqueIndexArguments(uniqueIndexArguments);
         mongoPushTestModel.setDeleteDocumentArguments(deleteDocumentArguments);
+        mongoPushTestModel.setUpdateDocumentArguments(updateDocumentArguments);
         return mongoPushTestModel;
 	}
 	

@@ -175,6 +175,18 @@ public class MongoPushBaseTest {
 						targetTestClient.deleteDocuments(Integer.valueOf(deleteDocumentArgumentsArray[1]), Integer.valueOf(deleteDocumentArgumentsArray[2]), Integer.valueOf(deleteDocumentArgumentsArray[3]));
 					}
 				}
+				if(mongoPushTestModel.getUpdateDocumentArguments() != null)
+				{
+					String[] updateDocumentArgumentsArray = mongoPushTestModel.getUpdateDocumentArguments().split(COMMA);
+					if(updateDocumentArgumentsArray[0].equals(SOURCE))
+					{
+						sourceTestClient.updateDocuments(Integer.valueOf(updateDocumentArgumentsArray[1]), Integer.valueOf(updateDocumentArgumentsArray[2]), Integer.valueOf(updateDocumentArgumentsArray[3]));
+					}
+					if(updateDocumentArgumentsArray[0].equals(TARGET))
+					{
+						targetTestClient.updateDocuments(Integer.valueOf(updateDocumentArgumentsArray[1]), Integer.valueOf(updateDocumentArgumentsArray[2]), Integer.valueOf(updateDocumentArgumentsArray[3]));
+					}
+				}
 				break;
 			case MATCH_REFETCH_COLLECTION:
 				if(mongoPushTestModel.getDeleteDocumentArguments() != null)

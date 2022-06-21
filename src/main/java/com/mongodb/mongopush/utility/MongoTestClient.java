@@ -136,6 +136,26 @@ public class MongoTestClient {
 		}
 	}
 	
+	public void updateDocuments(int numDbs, int collectionsPerDb, int docsPerCollection)
+	{
+		for (int dbNum = 0; dbNum < numDbs; dbNum++) {
+			String dbName = DB + dbNum;
+			MongoDatabase db = mongoClient.getDatabase(dbName);
+			for (int collNum = 0; collNum < collectionsPerDb; collNum++) {
+				String collName = COL + collNum;
+				MongoCollection<Document> coll = db.getCollection(collName);
+				for(int i=0;i<docsPerCollection;i++)
+				{
+					Bson condition = Filters.eq(UNDERSCORE_ID, i);
+					
+					BasicDBObject basicDBObject = new BasicDBObject();
+					basicDBObject.append("$set", new BasicDBObject("added_field", "Text for new added field"));
+					coll.findOneAndUpdate(condition, basicDBObject);
+				}
+			}
+		}
+	}
+	
 	public boolean matchRefetchCollection(int numDbs, int collectionsPerDb, int docsPerCollection)
 	{
 		MongoDatabase db = mongoClient.getDatabase(DB_UNDERSCORE_MONGO_PUSH);
