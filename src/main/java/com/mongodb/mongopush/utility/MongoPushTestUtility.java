@@ -84,7 +84,12 @@ public class MongoPushTestUtility {
 		String uniqueIndexArguments = (String) jsonObject.get(UNIQUE_INDEX_ARGUMENTS);
 		String deleteDocumentArguments = (String) jsonObject.get(DELETE_DOCUMENT_ARGUMENTS);
 		String updateDocumentArguments = (String) jsonObject.get(UPDATE_DOCUMENT_ARGUMENTS);
-		long testInitialDocumentCount = (Long) jsonObject.get(TEST_INITIAL_DOCUMENT_COUNT);
+		
+		long testInitialDocumentCount = 0;
+		if(jsonObject.get(TEST_INITIAL_DOCUMENT_COUNT) != null)
+		{
+			testInitialDocumentCount = (Long) jsonObject.get(TEST_INITIAL_DOCUMENT_COUNT);
+		}
 		
         List<MongoPushTestEvent> testSequenceEventsList = getTestSequenceEvents(testSequenceName);
         IncludeOption[] includeOptionArray = parseIncludeOptionsString(includeOptions);
