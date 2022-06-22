@@ -61,6 +61,7 @@ public class MongoTestClient {
 
 	private MongoClientSettings mongoClientSettings;
 	private List<String> databaseNameList;
+	private List<String> collectionNameList;
 	private List<String> databasesNotToDelete = Arrays.asList(ADMIN, CONFIG, LOCAL);;
 
 	private MongoClient mongoClient;
@@ -154,6 +155,24 @@ public class MongoTestClient {
 				}
 			}
 		}
+	}
+	
+	public long countDocuments(String dbName, String collName, String filter)
+	{
+		MongoDatabase db = mongoClient.getDatabase(dbName);
+		MongoCollection<Document> coll = db.getCollection(collName);
+		long documentCount = 0;
+		if(filter != null)
+		{
+			Document filterDocument = Document.parse(filter);
+			documentCount = coll.countDocuments(filterDocument);
+		}
+		else
+		{
+			documentCount = coll.countDocuments();
+		}
+		
+	    return documentCount;
 	}
 	
 	public boolean matchRefetchCollection(int numDbs, int collectionsPerDb, int docsPerCollection)
@@ -333,9 +352,24 @@ public class MongoTestClient {
 		databaseNameList = new ArrayList<String>();
 	    MongoCursor<String> dbsCursor = mongoClient.listDatabaseNames().iterator();
 	    while(dbsCursor.hasNext()) {
-	    	databaseNameList.add(dbsCursor.next());
+	    	String databaseName = dbsCursor.next();
+	    	if(!databasesNotToDelete.contains(databaseName))
+	    	{
+	    		databaseNameList.add(databaseName);
+	    	}
 	    }
 	    return databaseNameList;
+	}
+	
+	public List<String> getAllCollectionNamesInDatabase(String databaseName){
+		collectionNameList = new ArrayList<String>();
+		MongoDatabase mongoDatabase = mongoClient.getDatabase(databaseName);
+		MongoCursor<String> collsCursor = mongoDatabase.listCollectionNames().iterator();
+		
+	    while(collsCursor.hasNext()) {
+	    	collectionNameList.add(collsCursor.next());
+	    }
+	    return collectionNameList;
 	}
 	
 	public void dropAllDatabasesByName() {

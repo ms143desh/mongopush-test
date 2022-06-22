@@ -26,6 +26,7 @@ public enum MongoPushTestEvent {
 	MATCH_REFETCH_COLLECTION("MatchRefetchCollection"),
 	EXECUTE_OTHER_MIGRATION_TOOL("ExecuteOtherMigrationTool"),
 	EXECUTE_OTHER_MIGRATION_TOOL_COMPARE("ExecuteOtherMigrationToolCompare"),
+	MATCH_DOCUMENT_COUNT("MatchDocumentCount"),
 	DELAY("Delay");
 	
 	private String name;

@@ -6,6 +6,9 @@
             "filter": {
                 "fld0": {
                     "$gt": 500000
+                },
+                "fld2": {
+                    "$regex": ".*takimata.*"
                 }
             }
         },

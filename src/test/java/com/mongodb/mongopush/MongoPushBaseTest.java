@@ -1,14 +1,17 @@
 package com.mongodb.mongopush;
 
 import static com.mongodb.mongopush.constants.MongoPushConstants.*;
-import static com.mongodb.mongopush.constants.MongoPushConstants.SLASH_DOT;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.commons.exec.ExecuteException;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -24,6 +27,7 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import com.mongodb.diffutil.DiffSummary;
 import com.mongodb.diffutil.DiffUtilRunner;
 import com.mongodb.mongopush.MongopushOptions.Builder;
+import com.mongodb.mongopush.MongopushOptions.IncludeOption;
 import com.mongodb.mongopush.config.MongoPushConfiguration;
 import com.mongodb.mongopush.events.InitialSyncCompletedEvent;
 import com.mongodb.mongopush.events.OplogAppliedLagEvent;
@@ -96,7 +100,7 @@ public class MongoPushBaseTest {
 		return testToRun;
 	}
 	
-	protected void processTestEventsSequence(MongoPushTestEvent mongoPushTestEvent, MongoPushTestModel mongoPushTestModel) throws ExecuteException, IOException, InterruptedException
+	protected void processTestEventsSequence(MongoPushTestEvent mongoPushTestEvent, MongoPushTestModel mongoPushTestModel) throws ExecuteException, IOException, InterruptedException, ParseException
 	{
 		logger.info("Processing event started - {}", mongoPushTestEvent.getName());
 		MongopushOptions options;
@@ -347,6 +351,16 @@ public class MongoPushBaseTest {
 			case DELAY:
 				Thread.sleep(5000);
 				break;
+			case MATCH_DOCUMENT_COUNT:
+				if(mongoPushTestModel.getIncludeOptions() != null)
+				{
+					matchDocumentCountWithFilters(mongoPushTestModel);
+				}
+				else
+				{
+					matchDocumentCount();
+				}
+				break;
 			case EXECUTE_DIFF_UTIL:
 				DiffSummary ds = diffUtilRunner.diff();
 				assertDiffResults(ds);
@@ -354,6 +368,54 @@ public class MongoPushBaseTest {
 				break;
 		}
 		logger.info("Processing event completed - {}", mongoPushTestEvent.getName());
+	}
+	
+	private void matchDocumentCountWithFilters(MongoPushTestModel mongoPushTestModel) throws ParseException
+	{
+		IncludeOption[] includeOptionArray = mongoPushTestModel.getIncludeOptions();
+		JSONParser jsonParser = new JSONParser();
+		for(IncludeOption includeOption: includeOptionArray)
+		{
+			JSONObject includeOptionJsonObject = (JSONObject) jsonParser.parse(includeOption.toJson());
+			String namespace = (String) includeOptionJsonObject.get(NAMESPACE);
+	        String filter = null;
+	        if(includeOptionJsonObject.get(FILTER) != null)
+	        {
+	        	filter = includeOptionJsonObject.get(FILTER).toString();
+	        }
+	        String to = null;
+	        if(includeOptionJsonObject.get(TO) != null)
+	        {
+	        	to = (String) includeOptionJsonObject.get(TO);
+	        }
+	        
+	        String[] dbCollNameArray = namespace.split(SLASH_DOT);
+	        long sourceDocumentCount = sourceTestClient.countDocuments(dbCollNameArray[0], dbCollNameArray[1], filter);
+	        if(to != null)
+	        {
+	        	dbCollNameArray = to.split(SLASH_DOT);
+	        }
+	        long targetDocumentCount = targetTestClient.countDocuments(dbCollNameArray[0], dbCollNameArray[1], null);
+	        
+	        logger.info("Document count {} source {}, target {}", namespace, sourceDocumentCount, targetDocumentCount);
+	        assertTrue(sourceDocumentCount == targetDocumentCount);
+		}
+	}
+	
+	private void matchDocumentCount()
+	{
+		List<String> databaseNameList = sourceTestClient.getAllDatabaseNames();
+		for(String databaseName: databaseNameList)
+		{
+			List<String> collectionNameList = sourceTestClient.getAllCollectionNamesInDatabase(databaseName);
+			for(String collectionName: collectionNameList)
+			{
+				long sourceDocumentCount = sourceTestClient.countDocuments(databaseName, collectionName, null);
+		        long targetDocumentCount = targetTestClient.countDocuments(databaseName, collectionName, null);
+		        logger.info("Document count {} source {}, target {}", databaseName.concat(DOT).concat(collectionName), sourceDocumentCount, targetDocumentCount);
+		        assertTrue(sourceDocumentCount == targetDocumentCount);
+			}
+		}
 	}
 	
 	private static void assertDiffResults(DiffSummary ds) {

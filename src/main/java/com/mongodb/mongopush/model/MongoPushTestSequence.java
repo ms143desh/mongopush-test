@@ -32,7 +32,8 @@ public enum MongoPushTestSequence {
 			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
 			MongoPushTestEvent.EXECUTE_MONGO_PUSH_MODE_VERIFY,
 			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED,
-			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH
+			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
+			MongoPushTestEvent.MATCH_DOCUMENT_COUNT
 			)),
 	
 	POC_DRIVER_MONGO_PUSH_DATA_SYNC_VERIFY(Arrays.asList(
@@ -44,7 +45,8 @@ public enum MongoPushTestSequence {
 			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
 			MongoPushTestEvent.EXECUTE_MONGO_PUSH_MODE_VERIFY,
 			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED,
-			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH
+			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
+			MongoPushTestEvent.MATCH_DOCUMENT_COUNT
 			)),
 	
 	POC_DRIVER_MONGO_PUSH_DATA_SYNC_OPLOG(Arrays.asList(
@@ -75,7 +77,8 @@ public enum MongoPushTestSequence {
 			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
 			MongoPushTestEvent.EXECUTE_MONGO_PUSH_MODE_VERIFY,
 			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED,
-			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH
+			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
+			MongoPushTestEvent.MATCH_DOCUMENT_COUNT
 			)),
 	
 	POC_DRIVER_MONGO_PUSH_DATA_ONLY_SYNC_MULTIPLE_DATABASE_VERIFY_REFETCH(Arrays.asList(
@@ -95,7 +98,8 @@ public enum MongoPushTestSequence {
 			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
 			MongoPushTestEvent.EXECUTE_MONGO_PUSH_MODE_VERIFY,
 			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED,
-			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH
+			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
+			MongoPushTestEvent.MATCH_DOCUMENT_COUNT
 			)),
 	
 	POC_DRIVER_MONGO_PUSH_DATA_SYNC_OPLOG_ONE_DATABASE_VERIFY_REFETCH(Arrays.asList(
@@ -116,7 +120,8 @@ public enum MongoPushTestSequence {
 			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
 			MongoPushTestEvent.EXECUTE_MONGO_PUSH_MODE_VERIFY,
 			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED,
-			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH
+			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
+			MongoPushTestEvent.MATCH_DOCUMENT_COUNT
 			)),
 	
 	POC_DRIVER_MONGO_PUSH_DATA_SYNC_OPLOG_MULTIPLE_DATABASE_VERIFY_REFETCH(Arrays.asList(
@@ -137,7 +142,8 @@ public enum MongoPushTestSequence {
 			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
 			MongoPushTestEvent.EXECUTE_MONGO_PUSH_MODE_VERIFY,
 			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED,
-			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH
+			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
+			MongoPushTestEvent.MATCH_DOCUMENT_COUNT
 			)),
 	
 	POC_DRIVER_MONGO_PUSH_DATA_SYNC_DATA_OPERATION_OPLOG_ONE_DATABASE_VERIFY_REFETCH(Arrays.asList(
@@ -159,7 +165,8 @@ public enum MongoPushTestSequence {
 			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
 			MongoPushTestEvent.EXECUTE_MONGO_PUSH_MODE_VERIFY,
 			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED,
-			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH
+			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
+			MongoPushTestEvent.MATCH_DOCUMENT_COUNT
 			)),
 	
 	POC_DRIVER_MONGO_PUSH_DATA_SYNC_DATA_OPERATION_OPLOG_MULTIPLE_DATABASE_VERIFY_REFETCH(Arrays.asList(
@@ -181,7 +188,8 @@ public enum MongoPushTestSequence {
 			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
 			MongoPushTestEvent.EXECUTE_MONGO_PUSH_MODE_VERIFY,
 			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED,
-			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH
+			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
+			MongoPushTestEvent.MATCH_DOCUMENT_COUNT
 			)),
 	
 	//Test sequence only for mongopush verify stage
@@ -189,7 +197,8 @@ public enum MongoPushTestSequence {
 			MongoPushTestEvent.POPULATE_STATIC_DATA,
 			MongoPushTestEvent.EXECUTE_MONGO_PUSH_MODE_VERIFY,
 			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED,
-			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH
+			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
+			MongoPushTestEvent.MATCH_DOCUMENT_COUNT
 			)),
 	MONGO_PUSH_POPULATE_DATA_VERIFY_FAILED(Arrays.asList(
 			MongoPushTestEvent.POPULATE_STATIC_DATA,
@@ -220,7 +229,8 @@ public enum MongoPushTestSequence {
 			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
 			MongoPushTestEvent.EXECUTE_MONGO_PUSH_MODE_VERIFY,
 			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED,
-			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH
+			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
+			MongoPushTestEvent.MATCH_DOCUMENT_COUNT
 			)),
 	
 	POC_DRIVER_MONGO_PUSH_DATA_KILL_RESUME_SYNC_OPLOG(Arrays.asList(
@@ -236,7 +246,8 @@ public enum MongoPushTestSequence {
 			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
 			MongoPushTestEvent.EXECUTE_MONGO_PUSH_MODE_VERIFY,
 			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED,
-			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH
+			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
+			MongoPushTestEvent.MATCH_DOCUMENT_COUNT
 			)),
 	
 	POC_DRIVER_MONGO_PUSH_DATA_KILL_RESUME_SYNC_KILL_RESUME_OPLOG_KILL_RESUME(Arrays.asList(
@@ -257,7 +268,8 @@ public enum MongoPushTestSequence {
 			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
 			MongoPushTestEvent.EXECUTE_MONGO_PUSH_MODE_VERIFY,
 			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED,
-			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH
+			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
+			MongoPushTestEvent.MATCH_DOCUMENT_COUNT
 			)),
 	
 	
@@ -274,7 +286,8 @@ public enum MongoPushTestSequence {
 			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
 			MongoPushTestEvent.EXECUTE_OTHER_MIGRATION_TOOL_COMPARE,
 			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED,
-			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH
+			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
+			MongoPushTestEvent.MATCH_DOCUMENT_COUNT
 			)),
 	
 	POC_DRIVER_OTHER_MIGRATION_TOOL_DATA_ONLY_SYNC_OPLOG(Arrays.asList(
@@ -286,7 +299,8 @@ public enum MongoPushTestSequence {
 			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
 			MongoPushTestEvent.EXECUTE_OTHER_MIGRATION_TOOL_COMPARE,
 			MongoPushTestEvent.FINAL_VERIFICATION_TASK_COMPLETED,
-			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH
+			MongoPushTestEvent.SHUTDOWN_MONGO_PUSH,
+			MongoPushTestEvent.MATCH_DOCUMENT_COUNT
 			));
 	
 	private List<MongoPushTestEvent> mongoPushTestEvents;
