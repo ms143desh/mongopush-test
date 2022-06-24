@@ -13,6 +13,9 @@ public class MongoPushTestModel {
 	private ReplaceDataArgumentsModel replaceDataArguments;
 	private String idAsDocumentArguments;
 	private String uniqueIndexArguments;
+	private String deleteDocumentArguments;
+	private String updateDocumentArguments;
+	private long testInitialDocumentCount;
 	
 	public List<MongoPushTestEvent> getMongoPushTestEvents() {
 		return mongoPushTestEvents;
@@ -55,6 +58,24 @@ public class MongoPushTestModel {
 	}
 	public void setUniqueIndexArguments(String uniqueIndexArguments) {
 		this.uniqueIndexArguments = uniqueIndexArguments;
+	}
+	public String getDeleteDocumentArguments() {
+		return deleteDocumentArguments;
+	}
+	public void setDeleteDocumentArguments(String deleteDocumentArguments) {
+		this.deleteDocumentArguments = deleteDocumentArguments;
+	}
+	public String getUpdateDocumentArguments() {
+		return updateDocumentArguments;
+	}
+	public void setUpdateDocumentArguments(String updateDocumentArguments) {
+		this.updateDocumentArguments = updateDocumentArguments;
+	}
+	public long getTestInitialDocumentCount() {
+		return testInitialDocumentCount;
+	}
+	public void setTestInitialDocumentCount(long testInitialDocumentCount) {
+		this.testInitialDocumentCount = testInitialDocumentCount;
 	}
 	
 }

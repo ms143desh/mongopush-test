@@ -1,7 +1,7 @@
 package com.mongodb.mongopush.utility;
 
 import static com.mongodb.client.model.Filters.regex;
-import static com.mongodb.mongopush.constants.MongoPushConstants.ADMIN;
+import static com.mongodb.mongopush.constants.MongoPushConstants.*;
 import static com.mongodb.mongopush.constants.MongoPushConstants.CONFIG;
 import static com.mongodb.mongopush.constants.MongoPushConstants.LOCAL;
 import static com.mongodb.mongopush.constants.MongoPushConstants.UNIQUE_FIELD;
@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.MongoCommandException;
@@ -41,6 +42,7 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
 import com.mongodb.client.model.Updates;
@@ -59,6 +61,7 @@ public class MongoTestClient {
 
 	private MongoClientSettings mongoClientSettings;
 	private List<String> databaseNameList;
+	private List<String> collectionNameList;
 	private List<String> databasesNotToDelete = Arrays.asList(ADMIN, CONFIG, LOCAL);;
 
 	private MongoClient mongoClient;
@@ -81,17 +84,17 @@ public class MongoTestClient {
 		mongoClient = MongoClients.create(mongoClientSettings);
 	}
 	
-	public void populateData(int numDbs, int collectionsPerDb, int docsPerCollection, boolean uniqueIndex) {
+	public void populateData(int numDbs, int collectionsPerDb, int docsPerCollection, boolean uniqueIndex, boolean staticContent) {
 		List<Document> docsBuffer = new ArrayList<>(docsPerCollection);
 		for (int dbNum = 0; dbNum < numDbs; dbNum++) {
-			String dbName = "db" + dbNum;
+			String dbName = DB + dbNum;
 			if(uniqueIndex)
 			{
 				dbName += "unique";
 			}
 			MongoDatabase db = mongoClient.getDatabase(dbName);
 			for (int collNum = 0; collNum < collectionsPerDb; collNum++) {
-				String collName = "c" + collNum;
+				String collName = COL + collNum;
 				MongoCollection<Document> coll = db.getCollection(collName);
 				
 				if(uniqueIndex)
@@ -102,12 +105,111 @@ public class MongoTestClient {
 				}
 				
 				for (int docNum = 0; docNum < docsPerCollection; docNum++) {
-					docsBuffer.add(createDocument(docNum, false));
+					if(staticContent)
+					{
+						docsBuffer.add(createStaticDocument(docNum));
+					}
+					else
+					{
+						docsBuffer.add(createDocument(docNum, false));
+					}
 				}
 				coll.insertMany(docsBuffer);
 				docsBuffer.clear();
 			}
 		}
+	}
+	
+	public void deleteDocuments(int numDbs, int collectionsPerDb, int docsPerCollection)
+	{
+		for (int dbNum = 0; dbNum < numDbs; dbNum++) {
+			String dbName = DB + dbNum;
+			MongoDatabase db = mongoClient.getDatabase(dbName);
+			for (int collNum = 0; collNum < collectionsPerDb; collNum++) {
+				String collName = COL + collNum;
+				MongoCollection<Document> coll = db.getCollection(collName);
+				for(int i=0;i<docsPerCollection;i++)
+				{
+					Bson condition = Filters.eq(UNDERSCORE_ID, i);
+					coll.findOneAndDelete(condition);
+				}
+			}
+		}
+	}
+	
+	public void updateDocuments(int numDbs, int collectionsPerDb, int docsPerCollection)
+	{
+		for (int dbNum = 0; dbNum < numDbs; dbNum++) {
+			String dbName = DB + dbNum;
+			MongoDatabase db = mongoClient.getDatabase(dbName);
+			for (int collNum = 0; collNum < collectionsPerDb; collNum++) {
+				String collName = COL + collNum;
+				MongoCollection<Document> coll = db.getCollection(collName);
+				for(int i=0;i<docsPerCollection;i++)
+				{
+					Bson condition = Filters.eq(UNDERSCORE_ID, i);
+					
+					BasicDBObject basicDBObject = new BasicDBObject();
+					basicDBObject.append("$set", new BasicDBObject("added_field", "Text for new added field"));
+					coll.findOneAndUpdate(condition, basicDBObject);
+				}
+			}
+		}
+	}
+	
+	public long countDocuments(String dbName, String collName, String filter)
+	{
+		MongoDatabase db = mongoClient.getDatabase(dbName);
+		MongoCollection<Document> coll = db.getCollection(collName);
+		long documentCount = 0;
+		if(filter != null)
+		{
+			Document filterDocument = Document.parse(filter);
+			documentCount = coll.countDocuments(filterDocument);
+		}
+		else
+		{
+			documentCount = coll.countDocuments();
+		}
+		
+	    return documentCount;
+	}
+	
+	public boolean matchRefetchCollection(int numDbs, int collectionsPerDb, int docsPerCollection)
+	{
+		MongoDatabase db = mongoClient.getDatabase(DB_UNDERSCORE_MONGO_PUSH);
+		MongoCollection<Document> coll = db.getCollection(COLL_REFETCH);
+		boolean refetchMatched = true;
+		dbLabel: for (int dbNum = 0; dbNum < numDbs; dbNum++) {
+			String dbName = DB + dbNum;
+			for (int collNum = 0; collNum < collectionsPerDb; collNum++) {
+				String collName = COL + collNum;
+				String srcNamespace = dbName.concat(DOT).concat(collName);
+				for(int i=0;i<docsPerCollection;i++)
+				{
+					Bson idFilter = Filters.eq(ID, i);
+				    Bson srcNamespaceFilter = Filters.eq(SRC_NAMESPACE, srcNamespace);
+				    FindIterable<Document> findIterable = coll.find(Filters.and(srcNamespaceFilter, idFilter));
+				    MongoCursor<Document> mongoCursor = findIterable.iterator();
+				    if(!mongoCursor.hasNext())
+				    {
+				    	refetchMatched = false;
+				    	break dbLabel;
+				    }
+				    while(mongoCursor.hasNext())
+				    {
+				    	Document document = mongoCursor.next();
+				    	String destNamespace = (String) document.get(DEST_NAMESPACE);
+				    	if(!srcNamespace.equals(destNamespace))
+				    	{
+				    		refetchMatched = false;
+				    		break dbLabel;
+				    	}
+				    }
+				}
+			}
+		}
+		return refetchMatched;
 	}
 	
 	public void populateDataForDatabase(String dbName, String collName, int docsPerCollection, boolean idAsDocument) {
@@ -131,6 +233,14 @@ public class MongoTestClient {
         return result.getModifiedCount();
 	}
 	
+	private Document createStaticDocument(int docNum)
+	{
+		Document document = new Document();
+		document.append(UNDERSCORE_ID, docNum);
+		addStaticDocumentFields(document);
+		return document;
+	}
+	
 	private Document createDocument(int docNum, boolean idAsDocument)
 	{
 		Document document = new Document();
@@ -140,11 +250,11 @@ public class MongoTestClient {
 			Document idDocument = new Document();
 			idDocument.append("uuid", uuid);
 			idDocument.append("created", fakerService.getRandomDate());
-			document.append("_id", idDocument);
+			document.append(UNDERSCORE_ID, idDocument);
 		}
 		else
 		{
-			document.append("_id", uuid.toString());
+			document.append(UNDERSCORE_ID, uuid.toString());
 		}
 		document.append(UNIQUE_FIELD, docNum);
 		addDocumentFields(document);
@@ -181,6 +291,26 @@ public class MongoTestClient {
 		document.append("decimal128_field", new Decimal128(random.nextLong()));
 		document.append("minkey_field", new MinKey());
 		document.append("maxkey_field", new MaxKey());
+	}
+	
+	private void addStaticDocumentFields(Document document)
+	{
+		document.append("fld0", 28928392839L);
+		document.append("fld1", "sit amet. Lorem ipsum dolor");
+		document.append("long_field", 28928392839L);
+		document.append("boolean_field", false);
+		document.append("double_field", 28392839.23902390);
+		String[] cars_array = {"Volvo", "BMW", "Honda"};
+		document.append("array_field", Arrays.asList(cars_array));
+		
+		Map<String, String> documentRandomMap = new HashMap<String, String>();
+		documentRandomMap.put("text_1", "This is document map text");
+		documentRandomMap.put("text_2", "This text is for static document");
+		document.append("map_field", documentRandomMap);
+		document.append("null_field", null);
+		document.append("regex_field", Pattern.compile("^.* random regex (.*)"));
+		document.append("integer_field", 98982992);
+		document.append("decimal128_field", 121212.121212);
 	}
 	
 	public List<String> getAllDatabases() {
@@ -222,9 +352,24 @@ public class MongoTestClient {
 		databaseNameList = new ArrayList<String>();
 	    MongoCursor<String> dbsCursor = mongoClient.listDatabaseNames().iterator();
 	    while(dbsCursor.hasNext()) {
-	    	databaseNameList.add(dbsCursor.next());
+	    	String databaseName = dbsCursor.next();
+	    	if(!databasesNotToDelete.contains(databaseName))
+	    	{
+	    		databaseNameList.add(databaseName);
+	    	}
 	    }
 	    return databaseNameList;
+	}
+	
+	public List<String> getAllCollectionNamesInDatabase(String databaseName){
+		collectionNameList = new ArrayList<String>();
+		MongoDatabase mongoDatabase = mongoClient.getDatabase(databaseName);
+		MongoCursor<String> collsCursor = mongoDatabase.listCollectionNames().iterator();
+		
+	    while(collsCursor.hasNext()) {
+	    	collectionNameList.add(collsCursor.next());
+	    }
+	    return collectionNameList;
 	}
 	
 	public void dropAllDatabasesByName() {

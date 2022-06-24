@@ -1,0 +1,5 @@
+{
+	"testSequenceName": "POC_DRIVER_MONGO_PUSH_DATA_SYNC_VERIFY",
+	"testInitialDocumentCount": 500000,
+	"pocdriveArguments" : "-k 200 -i 100 -u 100 -b 200"
+}

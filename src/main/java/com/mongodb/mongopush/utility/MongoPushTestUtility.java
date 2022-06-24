@@ -1,6 +1,6 @@
 package com.mongodb.mongopush.utility;
 
-import static com.mongodb.mongopush.constants.MongoPushConstants.FILTER;
+import static com.mongodb.mongopush.constants.MongoPushConstants.*;
 import static com.mongodb.mongopush.constants.MongoPushConstants.ID_AS_DOCUMENT_ARGUMENTS;
 import static com.mongodb.mongopush.constants.MongoPushConstants.INCLUDE_OPTIONS;
 import static com.mongodb.mongopush.constants.MongoPushConstants.NAMESPACE;
@@ -82,6 +82,14 @@ public class MongoPushTestUtility {
 		
 		String idAsDocumentArguments = (String) jsonObject.get(ID_AS_DOCUMENT_ARGUMENTS);
 		String uniqueIndexArguments = (String) jsonObject.get(UNIQUE_INDEX_ARGUMENTS);
+		String deleteDocumentArguments = (String) jsonObject.get(DELETE_DOCUMENT_ARGUMENTS);
+		String updateDocumentArguments = (String) jsonObject.get(UPDATE_DOCUMENT_ARGUMENTS);
+		
+		long testInitialDocumentCount = 0;
+		if(jsonObject.get(TEST_INITIAL_DOCUMENT_COUNT) != null)
+		{
+			testInitialDocumentCount = (Long) jsonObject.get(TEST_INITIAL_DOCUMENT_COUNT);
+		}
 		
         List<MongoPushTestEvent> testSequenceEventsList = getTestSequenceEvents(testSequenceName);
         IncludeOption[] includeOptionArray = parseIncludeOptionsString(includeOptions);
@@ -95,6 +103,9 @@ public class MongoPushTestUtility {
         mongoPushTestModel.setReplaceDataArguments(replaceDataArgumentsModel);
         mongoPushTestModel.setIdAsDocumentArguments(idAsDocumentArguments);
         mongoPushTestModel.setUniqueIndexArguments(uniqueIndexArguments);
+        mongoPushTestModel.setDeleteDocumentArguments(deleteDocumentArguments);
+        mongoPushTestModel.setUpdateDocumentArguments(updateDocumentArguments);
+        mongoPushTestModel.setTestInitialDocumentCount(testInitialDocumentCount);
         return mongoPushTestModel;
 	}
 	

@@ -3,7 +3,9 @@ package com.mongodb.mongopush.listener;
 import org.apache.commons.exec.ExecuteException;
 
 import com.mongodb.mongopush.events.InitialSyncCompletedEvent;
+import com.mongodb.mongopush.events.OplogAppliedLagEvent;
 import com.mongodb.mongopush.events.OplogStreamingCompletedEvent;
+import com.mongodb.mongopush.events.OplogTotalDocInsertedEvent;
 import com.mongodb.mongopush.events.RefetchTaskCompleteEvent;
 import com.mongodb.mongopush.events.VerificationTaskCompleteEvent;
 import com.mongodb.mongopush.events.VerificationTaskFailedEvent;
@@ -19,6 +21,14 @@ public interface MongopushStatusListener {
 	public void oplogStreamingCompleted(OplogStreamingCompletedEvent oplogStreamingCompletedEvent);
 
 	public boolean isOplogStreamingCompleted();
+	
+	public void oplogTotalDocInserted(OplogTotalDocInsertedEvent oplogTotalDocInsertedEvent);
+
+	public boolean isOplogTotalDocInserted();
+	
+	public void oplogAppliedLag(OplogAppliedLagEvent oplogAppliedLagEvent);
+
+	public boolean isOplogAppliedLag();
 	
 	public void verificationTaskComplete(VerificationTaskCompleteEvent verificationTaskCompleteEvent);
 
